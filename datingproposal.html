@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Will you go on a date with me?</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8c8d4 0%, #e8a0b8 50%, #d4a0d0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Georgia', serif;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .card {
+    background: white;
+    border-radius: 24px;
+    padding: 44px 36px;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+    max-width: 440px;
+    width: 90%;
+    animation: fadeIn 0.4s ease;
+    position: relative;
+    z-index: 2;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .icon { font-size: 48px; margin-bottom: 16px; }
+  h1 { font-size: 1.5rem; color: #333; margin-bottom: 28px; line-height: 1.4; }
+  h2 { font-size: 1.6rem; font-weight: 900; color: #222; margin-bottom: 10px; line-height: 1.3; }
+
+  .section-label {
+    font-size: 0.9rem; font-weight: bold; color: #444;
+    text-align: left; margin-bottom: 10px; margin-top: 18px;
+  }
+
+  /* Slide 1 */
+  .s1-buttons { display: flex; justify-content: center; gap: 24px; }
+  .btn-yes {
+    background: #e07090; color: white; border: none;
+    border-radius: 999px; padding: 14px 36px; font-size: 1rem;
+    cursor: pointer; font-family: inherit; transition: transform 0.1s, background 0.2s;
+  }
+  .btn-yes:hover { background: #c85878; transform: scale(1.05); }
+  .btn-no {
+    background: #a070c0; color: white; border: none;
+    border-radius: 999px; padding: 14px 36px; font-size: 1rem;
+    cursor: pointer; font-family: inherit; position: fixed;
+    transition: left 0.15s ease, top 0.15s ease;
+  }
+
+  /* Slide 2 */
+  #slide2 { display: none; }
+  #slide2 p { font-size: 1rem; color: #666; margin-bottom: 28px; }
+
+  /* Slide 3 */
+  #slide3 { display: none; }
+  .day-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 4px; }
+  .day-btn {
+    background: #f5eef8; border: 2px solid #e0c8f0; border-radius: 12px;
+    padding: 12px 16px; font-size: 0.95rem; font-family: inherit;
+    color: #555; cursor: pointer; text-align: left; transition: all 0.15s ease;
+  }
+  .day-btn:hover { background: #ede0f8; border-color: #a070c0; }
+  .day-btn.selected { background: #a070c0; border-color: #a070c0; color: white; font-weight: bold; }
+  .time-select {
+    width: 100%; padding: 12px 16px; border: 2px solid #e0c8f0; border-radius: 12px;
+    font-size: 0.95rem; font-family: inherit; color: #555; background: #f5eef8;
+    appearance: none; cursor: pointer; margin-top: 4px;
+  }
+  .time-select:focus { outline: none; border-color: #a070c0; }
+
+  /* Slide 4 */
+  #slide4 { display: none; }
+  .food-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 4px;
+  }
+  .food-btn {
+    background: #f5eef8; border: 2px solid #e0c8f0; border-radius: 16px;
+    padding: 18px 8px 12px; cursor: pointer; transition: all 0.15s ease;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .food-btn span { font-size: 2rem; }
+  .food-btn label { font-size: 0.85rem; color: #555; cursor: pointer; }
+  .food-btn:hover { background: #ede0f8; border-color: #a070c0; }
+  .food-btn.selected { background: #f0e0f8; border-color: #a070c0; border-width: 2.5px; }
+  .food-btn.selected label { color: #7050a0; font-weight: bold; }
+  .custom-input {
+    width: 100%; padding: 12px 16px; border: 2px solid #e0c8f0; border-radius: 12px;
+    font-size: 0.95rem; font-family: inherit; color: #555; background: #f5eef8;
+    margin-top: 6px; outline: none;
+  }
+  .custom-input:focus { border-color: #a070c0; }
+
+  /* Slide 5 */
+  #slide5 { display: none; }
+  #slide5 h2 {
+    font-size: 1.7rem; font-style: italic; font-weight: 900;
+    color: #222; margin-bottom: 16px; line-height: 1.4;
+  }
+  #slide5 .ps {
+    font-size: 0.85rem; font-style: italic; color: #999;
+    margin-bottom: 20px; line-height: 1.6;
+  }
+  .hearts-row { font-size: 1rem; color: #d4879f; letter-spacing: 6px; margin-bottom: 24px; }
+  .btn-claude {
+    background: #c07040; color: white; border: none;
+    border-radius: 999px; padding: 12px 28px; font-size: 0.9rem;
+    cursor: pointer; font-family: inherit; display: inline-flex;
+    align-items: center; gap: 8px; transition: background 0.2s;
+  }
+  .btn-claude:hover { background: #a05828; }
+
+  /* Floating hearts */
+  .floating-heart {
+    position: fixed; font-size: 1rem; color: #c06080;
+    animation: floatUp linear infinite; pointer-events: none; z-index: 0;
+    opacity: 0;
+  }
+  @keyframes floatUp {
+    0%   { transform: translateY(0) scale(1); opacity: 0.7; }
+    100% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
+  }
+
+  /* Shared button */
+  .btn-pink {
+    background: #d4879f; color: white; border: none;
+    border-radius: 999px; padding: 14px 36px; font-size: 1rem;
+    cursor: pointer; font-family: inherit;
+    transition: background 0.2s, transform 0.1s;
+    width: 100%; margin-top: 24px;
+  }
+  .btn-pink:hover { background: #b86080; transform: scale(1.02); }
+  .btn-pink:disabled { background: #e0b8c8; cursor: not-allowed; transform: none; }
+</style>
+</head>
+<body>
+
+<!-- Slide 1 -->
+<div class="card" id="slide1">
+  <div class="icon">🐾</div>
+  <h1>🌸 Will you go on a date with me? 🌸</h1>
+  <div class="s1-buttons">
+    <button class="btn-yes" onclick="sayYes()">YES ♥</button>
+    <button class="btn-no" id="noBtn" onclick="runAway()">NO 🐾</button>
+  </div>
+</div>
+
+<!-- Slide 2 -->
+<div class="card" id="slide2">
+  <div class="icon">🧽</div>
+  <h2>WAIT YOU ACTUALLY SAID YES?? 🥹</h2>
+  <p>I was so ready for you to say no 😅</p>
+  <button class="btn-pink" onclick="switchTo('slide3')">okay okay! →</button>
+</div>
+
+<!-- Slide 3 -->
+<div class="card" id="slide3">
+  <div class="icon">📅🐾</div>
+  <h2>So... when are you free?</h2>
+  <div class="section-label">Pick a Day 🗓️</div>
+  <div class="day-options" id="dayOptions"></div>
+  <div class="section-label">What Time? 🕐</div>
+  <select class="time-select" id="timeSelect" onchange="checkReady()">
+    <option value="">Select a time...</option>
+    <option>12:00 PM</option>
+    <option>1:00 PM</option>
+    <option>2:00 PM</option>
+    <option>3:00 PM</option>
+    <option>4:00 PM</option>
+    <option>5:00 PM</option>
+    <option>6:00 PM</option>
+    <option>7:00 PM</option>
+    <option>8:00 PM</option>
+    <option>9:00 PM</option>
+    <option>10:00 PM</option>
+    <option>11:00 PM</option>
+    <option>12:00 AM</option>
+  </select>
+  <button class="btn-pink" id="setDateBtn" onclick="switchTo('slide4')" disabled>set the date! ♥</button>
+</div>
+
+<!-- Slide 4 -->
+<div class="card" id="slide4">
+  <h2 style="margin-bottom:6px;">What are we feeling? 🍽️✨</h2>
+  <p style="color:#888; font-size:0.9rem; margin-bottom:16px;">pick your vibe</p>
+  <div class="food-grid">
+    <div class="food-btn" onclick="selectFood(this, 'Pizza')"><span>🍕</span><label>Pizza</label></div>
+    <div class="food-btn" onclick="selectFood(this, 'Sushi')"><span>🍣</span><label>Sushi</label></div>
+    <div class="food-btn" onclick="selectFood(this, 'Burgers')"><span>🍔</span><label>Burgers</label></div>
+    <div class="food-btn" onclick="selectFood(this, 'Pasta')"><span>🍝</span><label>Pasta</label></div>
+    <div class="food-btn" onclick="selectFood(this, 'Tacos')"><span>🌮</span><label>Tacos</label></div>
+    <div class="food-btn" onclick="selectFood(this, 'Ramen')"><span>🍜</span><label>Ramen</label></div>
+  </div>
+  <div style="margin-top:16px; text-align:left;">
+    <div class="section-label">Or suggest something 💬</div>
+    <input class="custom-input" type="text" id="customFood"
+      placeholder="e.g. Korean BBQ, ice cream..."
+      oninput="checkFood()" />
+  </div>
+  <button class="btn-pink" id="foodBtn" onclick="showFinal()" disabled>looks good! →</button>
+</div>
+
+<!-- Slide 5 -->
+<div class="card" id="slide5">
+  <h2 id="finalMsg"></h2>
+
+  <div class="hearts-row">♥ ♥ ♥ ♥ ♥</div>
+  <p style="font-size:1.1rem; color:#c85878; font-weight:bold;">See you soon! 🥰</p>
+</div>
+
+<script>
+  const noBtn = document.getElementById('noBtn');
+  let selectedDay = null;
+  let selectedTime = null;
+  let selectedFood = null;
+
+  window.addEventListener('load', () => {
+    const rect = noBtn.getBoundingClientRect();
+    noBtn.style.left = rect.left + 'px';
+    noBtn.style.top = rect.top + 'px';
+    buildDayOptions();
+  });
+
+  function runAway() {
+    const margin = 20;
+    const maxX = window.innerWidth - noBtn.offsetWidth - margin;
+    const maxY = window.innerHeight - noBtn.offsetHeight - margin;
+    noBtn.style.left = (Math.random() * (maxX - margin) + margin) + 'px';
+    noBtn.style.top = (Math.random() * (maxY - margin) + margin) + 'px';
+  }
+
+  function switchTo(id) {
+    ['slide1','slide2','slide3','slide4','slide5'].forEach(s => {
+      document.getElementById(s).style.display = 'none';
+    });
+    noBtn.style.display = 'none';
+    const target = document.getElementById(id);
+    target.style.display = 'block';
+    target.style.animation = 'none';
+    void target.offsetWidth;
+    target.style.animation = 'fadeIn 0.4s ease';
+  }
+
+  function sayYes() { switchTo('slide2'); }
+
+  function buildDayOptions() {
+    const targetDays = [1, 2, 3];
+    const container = document.getElementById('dayOptions');
+    const search = new Date();
+    search.setHours(0,0,0,0);
+    search.setDate(search.getDate() + 1);
+    const found = [];
+    while (found.length < 6) {
+      if (targetDays.includes(search.getDay())) found.push(new Date(search));
+      search.setDate(search.getDate() + 1);
+    }
+    found.forEach(date => {
+      const label = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+      const btn = document.createElement('button');
+      btn.className = 'day-btn';
+      btn.textContent = label;
+      btn.onclick = () => selectDay(btn, label);
+      container.appendChild(btn);
+    });
+  }
+
+  function selectDay(btn, label) {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedDay = label;
+    checkReady();
+  }
+
+  function checkReady() {
+    selectedTime = document.getElementById('timeSelect').value;
+    document.getElementById('setDateBtn').disabled = !(selectedDay && selectedTime);
+  }
+
+  function selectFood(el, name) {
+    document.querySelectorAll('.food-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedFood = name;
+    document.getElementById('customFood').value = '';
+    checkFood();
+  }
+
+  function checkFood() {
+    const custom = document.getElementById('customFood').value.trim();
+    if (custom) {
+      document.querySelectorAll('.food-btn').forEach(b => b.classList.remove('selected'));
+      selectedFood = custom;
+    }
+    document.getElementById('foodBtn').disabled = !selectedFood;
+  }
+
+  function showFinal() {
+    switchTo('slide5');
+    document.getElementById('finalMsg').textContent =
+      `glad you didn't say no. be ready by ${selectedTime}, I'm coming to get you 🚗`;
+    startFloatingHearts();
+  }
+
+  function startFloatingHearts() {
+    setInterval(() => {
+      const h = document.createElement('div');
+      h.className = 'floating-heart';
+      h.textContent = '♥';
+      h.style.left = Math.random() * 100 + 'vw';
+      h.style.bottom = '-20px';
+      h.style.animationDuration = (4 + Math.random() * 4) + 's';
+      h.style.fontSize = (0.8 + Math.random() * 0.8) + 'rem';
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 8000);
+    }, 600);
+  }
+</script>
+</body>
+</html>
